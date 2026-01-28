@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hangman Game with Start Screen</title>
+  <link rel="stylesheet" href="style.css" />
+  
+</head>
+<body>
+  <!-- Auth Screen -->
+  <div id="authContainer" class="auth-container">
+    <div class="auth-card">
+      <h1>Hangman Arena</h1>
+      <p class="auth-subtitle">Sign in to save your progress and climb the leaderboard.</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab active" data-auth-tab="login" role="tab" aria-selected="true">
+          Log In
+        </button>
+        <button type="button" class="auth-tab" data-auth-tab="signup" role="tab" aria-selected="false">
+          Sign Up
+        </button>
+      </div>
+
+      <form id="loginForm" class="auth-form" autocomplete="off">
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" placeholder="Enter username" required />
+
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Enter password" required />
+
+        <button type="submit" class="btn-start">Log In</button>
+        <p class="form-error" id="loginError" aria-live="polite"></p>
+      </form>
+
+      <form id="signupForm" class="auth-form hidden" autocomplete="off">
+        <label for="signupUsername">Username</label>
+        <input type="text" id="signupUsername" placeholder="Choose a username" required />
+
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" placeholder="Create a password" required minlength="4" />
+
+        <label for="signupConfirmPassword">Confirm Password</label>
+        <input type="password" id="signupConfirmPassword" placeholder="Re-type password" required minlength="4" />
+
+        <button type="submit" class="btn-start">Create Account</button>
+        <p class="form-error" id="signupError" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Start Screen -->
+  <div id="startScreen" class="start-screen hidden">
+    <div class="start-header">
+      <div>
+        <p class="welcome-text" id="welcomeText">Welcome back!</p>
+        <h1>Hangman Game</h1>
+        <p>Guess the hidden tech term before the figure is complete.</p>
+      </div>
+      <div class="player-badge">
+        <span>Logged in as</span>
+        <strong id="currentUserDisplay">Player</strong>
+      </div>
+    </div>
+    <div class="start-actions">
+      <button id="startBtn" class="btn-start">Start Game</button>
+      <button class="btn-secondary" data-open-leaderboard>Leaderboard</button>
+      <button id="logoutBtn" class="btn-outline">Log Out</button>
+    </div>
+  </div>
+
+  <!-- Game Container (hidden initially) -->
+  <main id="gameContainer" class="container hidden">
+    <header class="header">
+      <div class="header-left">
+        <h1>Hangman Game</h1>
+        <div class="difficulty-select">
+          <label for="difficultySelect">Difficulty</label>
+          <select id="difficultySelect" aria-label="Select difficulty level">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="lives-text"><span id="livesLeftDisplay">6/6 lives</span>
+          <div class="lives-dots" aria-label="Lives left" role="img" aria-live="polite">
+          </div>
+        </div>
+        <button class="btn-outline small" data-open-leaderboard>Leaderboard</button>
+        <button id="resetBtn" class="btn-reset">Reset Game</button>
+      </div>
+    </header>
+
+    <section class="game-area">
+      <!-- Hangman figure -->
+      <div class="hangman-figure">
+        <svg height="250" width="200" class="figure-container" aria-label="Hangman figure">
+          <line x1="60" y1="20" x2="140" y2="20" />
+          <line x1="140" y1="20" x2="140" y2="50" />
+          <line x1="60" y1="20" x2="60" y2="230" />
+          <line x1="20" y1="230" x2="100" y2="230" />
+
+          <circle cx="140" cy="70" r="20" class="figure-part head hidden" />
+          <line x1="140" y1="90" x2="140" y2="150" class="figure-part body hidden" />
+          <line x1="140" y1="120" x2="110" y2="100" class="figure-part left-arm hidden" />
+          <line x1="140" y1="120" x2="170" y2="100" class="figure-part right-arm hidden" />
+          <line x1="140" y1="150" x2="110" y2="180" class="figure-part left-leg hidden" />
+          <line x1="140" y1="150" x2="170" y2="180" class="figure-part right-leg hidden" />
+        </svg>
+        <p class="incorrect" aria-live="polite" id="incorrectGuessCount">0 incorrect guesses</p>
+      </div>
+
+      <!-- Controls & info -->
+      <div class="game-controls">
+        <div class="instructions" aria-live="polite">
+          <strong>Keep Guessing</strong>
+          <p>Take your best shot—each wrong guess reveals a new body part.</p>
+          <p>Lives left: <strong id="livesLeft">6</strong></p>
+        </div>
+
+        <div class="word-container" aria-label="Word to guess" role="textbox" aria-live="polite"></div>
+
+        <div class="hint-section">
+          <div id="hintDisplay" class="hint-display" aria-live="polite"></div>
+        </div>
+
+        <form id="letterForm" autocomplete="off" aria-label="Letter guessing form">
+          <input
+            type="text"
+            id="letterInput"
+            class="letter-input"
+            maxlength="1"
+            pattern="[a-zA-Z]"
+            title="Type a letter"
+            placeholder="Type a letter"
+            aria-label="Guess a letter"
+            required
+          />
+          <button type="submit" class="btn-guess">Guess</button>
+        </form>
+
+        <div class="keyboard" aria-label="Letter buttons" role="group"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Leaderboard -->
+  <div id="leaderboardPanel" class="leaderboard-panel hidden" aria-modal="true" role="dialog">
+    <div class="leaderboard-card">
+      <div class="leaderboard-header">
+        <div>
+          <p class="leaderboard-subtitle">Top Hangman Survivors</p>
+          <h2>Leaderboard</h2>
+        </div>
+        <button id="closeLeaderboardBtn" class="btn-outline small">Close</button>
+      </div>
+      <ol id="leaderboardList" class="leaderboard-list"></ol>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
