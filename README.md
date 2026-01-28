@@ -44,7 +44,7 @@ Hangman parts are revealed one-by-one.
 
 Clone the repository:
 
-git clone https://github.com/karanramlakhani45/hangman-game.git
+git clone https://github.com/kanishqchasta/hangman-game.git
 
 Open the project folder.
 
